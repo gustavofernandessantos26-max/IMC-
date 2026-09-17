@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo do Número Secreto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: white;
+            max-width: 500px;
+            width: 90%;
+            margin: 20px auto;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            color: #4a4a4a;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.05rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            background: white;
+            transition: border 0.3s;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+
+        .botao-secundario {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .botao-secundario:hover {
+            background: #e2e8f0;
+        }
+
+        .escondido {
+            display: none !important;
+        }
+
+        .placar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .placa {
+            background: #f7f8ff;
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+        }
+
+        .placa-label {
+            display: block;
+            font-size: 0.75rem;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        .placa strong {
+            font-size: 0.95rem;
+            color: #4a4a4a;
+        }
+
+        .dica {
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 1.05rem;
+            color: #4a5568;
+            min-height: 1.5em;
+        }
+
+        .resultado {
+            margin: 25px 0 10px;
+            padding: 20px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            text-align: center;
+            border: 3px solid #667eea;
+        }
+
+        .resultado.vitoria {
+            background: #f0fff4;
+            border-color: #38a169;
+        }
+
+        .resultado.derrota {
+            background: #fff5f5;
+            border-color: #e53e3e;
+        }
+
+        .historico {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .historico h3 {
+            margin-bottom: 15px;
+            color: #555;
+        }
+
+        .historico ul {
+            list-style: none;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .historico li {
+            padding: 10px 12px;
+            background: #f9f9f9;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .historico li.vitoria {
+            border-left-color: #38a169;
+        }
+
+        .historico li.derrota {
+            border-left-color: #e53e3e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Número Secreto</h1>
+            <p>Adivinhe o número escondido e bata o seu recorde</p>
+        </header>
+
+        <div id="tela-inicio">
+            <div class="form-group">
+                <label for="dificuldade">Nível:</label>
+                <select id="dificuldade">
+                    <option value="facil">Fácil — de 1 a 20 (8 tentativas)</option>
+                    <option value="medio" selected>Médio — de 1 a 50 (7 tentativas)</option>
+                    <option value="dificil">Difícil — de 1 a 100 (6 tentativas)</option>
+                </select>
+            </div>
+            <button type="button" onclick="iniciarJogo()">Começar Jogo</button>
+        </div>
+
+        <div id="tela-jogo" class="escondido">
+            <div class="placar">
+                <div class="placa">
+                    <span class="placa-label">Intervalo</span>
+                    <strong id="info-intervalo">1 a 50</strong>
+                </div>
+                <div class="placa">
+                    <span class="placa-label">Tentativas</span>
+                    <strong id="info-tentativas">7</strong>
+                </div>
+                <div class="placa">
+                    <span class="placa-label">Recorde</span>
+                    <strong id="info-recorde">—</strong>
+                </div>
+            </div>
+
+            <p id="dica" class="dica">Estou pensando em um número...</p>
+
+            <div class="form-group">
+                <label for="palpite">Seu palpite:</label>
+                <input type="number" id="palpite" min="1" step="1" placeholder="Ex: 25">
+            </div>
+
+            <button type="button" onclick="enviarPalpite()">Chutar</button>
+            <button type="button" class="botao-secundario" onclick="desistir()">Desistir</button>
+
+            <div id="resultado" class="resultado escondido"></div>
+        </div>
+
+        <div class="historico">
+            <h3>📖 Histórico de Partidas</h3>
+            <ul id="lista-historico"></ul>
+        </div>
+    </div>
+
+    <script>
+        const NIVEIS = {
+            facil: { min: 1, max: 20, tentativas: 8, nome: "Fácil" },
+            medio: { min: 1, max: 50, tentativas: 7, nome: "Médio" },
+            dificil: { min: 1, max: 100, tentativas: 6, nome: "Difícil" }
+        };
+
+        let numeroSecreto = 0;
+        let tentativasRestantes = 0;
+        let tentativasUsadas = 0;
+        let minAtual = 1;
+        let maxAtual = 50;
+        let nivelAtual = "medio";
+        let jogoAtivo = false;
+
+        function numeroAleatorio(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function recordeDoNivel(nivel) {
+            const recordes = JSON.parse(localStorage.getItem("recordesNumeroSecreto") || "{}");
+            return recordes[nivel] || null;
+        }
+
+        function salvarRecorde(nivel, tentativas) {
+            const recordes = JSON.parse(localStorage.getItem("recordesNumeroSecreto") || "{}");
+            if (!recordes[nivel] || tentativas < recordes[nivel]) {
+                recordes[nivel] = tentativas;
+                localStorage.setItem("recordesNumeroSecreto", JSON.stringify(recordes));
+                return true;
+            }
+            return false;
+        }
+
+        function atualizarPlacar() {
+            document.getElementById("info-intervalo").textContent = minAtual + " a " + maxAtual;
+            document.getElementById("info-tentativas").textContent = tentativasRestantes;
+            const recorde = recordeDoNivel(nivelAtual);
+            document.getElementById("info-recorde").textContent = recorde ? recorde + " tent." : "—";
+        }
+
+        function iniciarJogo() {
+            nivelAtual = document.getElementById("dificuldade").value;
+            const config = NIVEIS[nivelAtual];
+
+            minAtual = config.min;
+            maxAtual = config.max;
+            tentativasRestantes = config.tentativas;
+            tentativasUsadas = 0;
+            numeroSecreto = numeroAleatorio(minAtual, maxAtual);
+            jogoAtivo = true;
+
+            document.getElementById("tela-inicio").classList.add("escondido");
+            document.getElementById("tela-jogo").classList.remove("escondido");
+            document.getElementById("resultado").classList.add("escondido");
+            document.getElementById("resultado").innerHTML = "";
+            document.getElementById("dica").textContent = "Estou pensando em um número de " + minAtual + " a " + maxAtual + ".";
+            document.getElementById("palpite").value = "";
+            document.getElementById("palpite").focus();
+            atualizarPlacar();
+        }
+
+        function enviarPalpite() {
+            if (!jogoAtivo) {
+                return;
+            }
+
+            const campo = document.getElementById("palpite");
+            const palpite = parseInt(campo.value, 10);
+            const resultadoDiv = document.getElementById("resultado");
+
+            if ((!palpite && palpite !== 0) || palpite < minAtual || palpite > maxAtual) {
+                resultadoDiv.className = "resultado";
+                resultadoDiv.innerHTML = "<p>❌ Digite um número entre " + minAtual + " e " + maxAtual + ".</p>";
+                resultadoDiv.classList.remove("escondido");
+                return;
+            }
+
+            tentativasUsadas += 1;
+            tentativasRestantes -= 1;
+
+            if (palpite === numeroSecreto) {
+                finalizarJogo(true);
+                return;
+            }
+
+            if (tentativasRestantes <= 0) {
+                finalizarJogo(false);
+                return;
+            }
+
+            const dica = palpite < numeroSecreto ? "📈 Maior! Tente um número maior." : "📉 Menor! Tente um número menor.";
+            document.getElementById("dica").textContent = dica;
+            resultadoDiv.className = "resultado";
+            resultadoDiv.innerHTML = "<p>" + dica + "</p><p>Você ainda tem <strong>" + tentativasRestantes + "</strong> tentativa(s).</p>";
+            resultadoDiv.classList.remove("escondido");
+            atualizarPlacar();
+            campo.value = "";
+            campo.focus();
+        }
+
+        function finalizarJogo(venceu) {
+            jogoAtivo = false;
+            const resultadoDiv = document.getElementById("resultado");
+            const config = NIVEIS[nivelAtual];
+            let mensagemRecorde = "";
+
+            if (venceu) {
+                const novoRecorde = salvarRecorde(nivelAtual, tentativasUsadas);
+                mensagemRecorde = novoRecorde ? "<p>🏆 Novo recorde neste nível!</p>" : "";
+                resultadoDiv.className = "resultado vitoria";
+                resultadoDiv.innerHTML =
+                    "<h2>Você acertou!</h2>" +
+                    "<p>O número secreto era <strong>" + numeroSecreto + "</strong>.</p>" +
+                    "<p>Acertou em <strong>" + tentativasUsadas + "</strong> tentativa(s).</p>" +
+                    mensagemRecorde;
+                document.getElementById("dica").textContent = "✅ Muito bem!";
+            } else {
+                resultadoDiv.className = "resultado derrota";
+                resultadoDiv.innerHTML =
+                    "<h2>Fim de jogo</h2>" +
+                    "<p>O número secreto era <strong>" + numeroSecreto + "</strong>.</p>" +
+                    "<p>As tentativas acabaram. Tente de novo!</p>";
+                document.getElementById("dica").textContent = "❌ Não foi desta vez.";
+            }
+
+            resultadoDiv.classList.remove("escondido");
+            atualizarPlacar();
+            salvarNoHistorico(venceu, config.nome, tentativasUsadas, numeroSecreto);
+            resultadoDiv.innerHTML += '<button type="button" onclick="voltarAoInicio()">Jogar de novo</button>';
+        }
+
+        function desistir() {
+            if (!jogoAtivo) {
+                voltarAoInicio();
+                return;
+            }
+            finalizarJogo(false);
+        }
+
+        function voltarAoInicio() {
+            jogoAtivo = false;
+            document.getElementById("tela-jogo").classList.add("escondido");
+            document.getElementById("tela-inicio").classList.remove("escondido");
+            document.getElementById("resultado").classList.add("escondido");
+        }
+
+        function salvarNoHistorico(venceu, nivel, tentativas, numero) {
+            let historico = JSON.parse(localStorage.getItem("historicoNumeroSecreto") || "[]");
+            historico.unshift({
+                data: new Date().toLocaleString("pt-BR"),
+                venceu: venceu,
+                nivel: nivel,
+                tentativas: tentativas,
+                numero: numero
+            });
+            if (historico.length > 10) {
+                historico.pop();
+            }
+            localStorage.setItem("historicoNumeroSecreto", JSON.stringify(historico));
+            carregarHistorico();
+        }
+
+        function carregarHistorico() {
+            const lista = document.getElementById("lista-historico");
+            const historico = JSON.parse(localStorage.getItem("historicoNumeroSecreto") || "[]");
+            lista.innerHTML = "";
+
+            if (historico.length === 0) {
+                const vazio = document.createElement("li");
+                vazio.textContent = "Nenhuma partida ainda. Comece um jogo!";
+                lista.appendChild(vazio);
+                return;
+            }
+
+            historico.forEach(function (item) {
+                const li = document.createElement("li");
+                li.className = item.venceu ? "vitoria" : "derrota";
+                const status = item.venceu ? "Vitória" : "Derrota";
+                li.textContent = item.data + " — " + status + " | " + item.nivel + " | número " + item.numero + " | " + item.tentativas + " tent.";
+                lista.appendChild(li);
+            });
+        }
+
+        document.getElementById("palpite").addEventListener("keydown", function (evento) {
+            if (evento.key === "Enter") {
+                enviarPalpite();
+            }
+        });
+
+        window.onload = carregarHistorico;
+    </script>
+</body>
+</html>
