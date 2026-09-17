@@ -3,443 +3,461 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo do Número Secreto</title>
+    <title>Meu IMC · Calculadora</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg-1: #07131f;
+            --bg-2: #0b1c2c;
+            --card: rgba(14, 36, 54, 0.86);
+            --line: rgba(148, 211, 230, 0.16);
+            --text: #f4fbff;
+            --muted: #8fb3c4;
+            --accent: #2ee6c2;
+            --accent-2: #5eead4;
+            --accent-dark: #0f766e;
+            --blue: #38bdf8;
+            --green: #34d399;
+            --yellow: #fbbf24;
+            --orange: #fb923c;
+            --red: #f87171;
+            --dark-red: #ef4444;
+            --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
             min-height: 100vh;
+            font-family: Outfit, system-ui, sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(900px 500px at 10% -10%, rgba(46, 230, 194, 0.16), transparent 55%),
+                radial-gradient(700px 420px at 100% 0%, rgba(56, 189, 248, 0.12), transparent 50%),
+                linear-gradient(180deg, var(--bg-1), var(--bg-2) 55%, #061018);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 28px 16px;
         }
 
-        .container {
-            background: white;
-            max-width: 500px;
-            width: 90%;
-            margin: 20px auto;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        .wrap { width: 100%; max-width: 460px; }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            background: rgba(46, 230, 194, 0.08);
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 30px;
+        header { text-align: center; margin-bottom: 26px; }
+
+        h1 {
+            font-size: clamp(2rem, 6vw, 2.6rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            font-weight: 800;
         }
 
-        header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            color: #4a4a4a;
+        h1 em { font-style: normal; color: var(--accent); }
+        .lead { margin-top: 10px; color: var(--muted); font-size: 1rem; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            padding: 26px 22px 24px;
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow);
         }
 
-        header p {
-            color: #666;
-            font-size: 1.05rem;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
         }
 
         label {
             display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
             margin-bottom: 8px;
-            font-weight: bold;
-            color: #444;
         }
 
-        input,
-        select {
+        .box {
+            position: relative;
+            background: rgba(7, 19, 31, 0.55);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 10px 12px 8px;
+        }
+
+        .box:focus-within {
+            border-color: rgba(46, 230, 194, 0.55);
+            box-shadow: 0 0 0 3px rgba(46, 230, 194, 0.12);
+        }
+
+        input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            background: white;
-            transition: border 0.3s;
+            background: transparent;
+            border: 0;
+            outline: 0;
+            color: var(--text);
+            font: inherit;
+            font-size: 1.55rem;
+            font-weight: 700;
+            padding-right: 42px;
         }
 
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+        .unit {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-35%);
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 600;
         }
 
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.15rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-            margin-top: 10px;
+        .toggle {
+            display: flex;
+            gap: 6px;
+            margin: -6px 0 16px;
+            justify-content: flex-end;
         }
 
-        button:hover {
-            background: #5a67d8;
-        }
-
-        .botao-secundario {
-            background: #edf2f7;
-            color: #4a5568;
-        }
-
-        .botao-secundario:hover {
-            background: #e2e8f0;
-        }
-
-        .escondido {
-            display: none !important;
-        }
-
-        .placar {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .placa {
-            background: #f7f8ff;
-            border-radius: 12px;
-            padding: 10px 6px;
-            text-align: center;
-        }
-
-        .placa-label {
-            display: block;
+        .toggle button {
+            border: 1px solid var(--line);
+            background: transparent;
+            color: var(--muted);
+            border-radius: 999px;
+            padding: 5px 10px;
+            font: inherit;
             font-size: 0.75rem;
-            color: #718096;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .toggle button.active {
+            background: rgba(46, 230, 194, 0.16);
+            color: var(--accent);
+            border-color: rgba(46, 230, 194, 0.35);
+        }
+
+        .btn {
+            width: 100%;
+            border: 0;
+            border-radius: 16px;
+            padding: 16px;
+            font: inherit;
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #04231e;
+            background: linear-gradient(180deg, var(--accent-2), var(--accent));
+            cursor: pointer;
+            box-shadow: 0 10px 24px rgba(46, 230, 194, 0.22);
+        }
+
+        .btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+
+        .error {
+            display: none;
+            margin-top: 12px;
+            color: #fecaca;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 12px;
+            padding: 10px 12px;
+            font-size: 0.88rem;
+        }
+
+        .error.show { display: block; }
+        .results { display: none; margin-top: 22px; text-align: center; }
+        .results.show { display: block; animation: up 0.4s ease; }
+
+        @keyframes up {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ring { width: 168px; height: 168px; margin: 0 auto 16px; position: relative; }
+        .ring svg { width: 168px; height: 168px; transform: rotate(-90deg); }
+        .track { fill: none; stroke: #1e3a4a; stroke-width: 11; }
+        .bar {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 11;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 0.8s ease, stroke 0.3s;
+        }
+
+        .center {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .center strong { font-size: 2.5rem; line-height: 1; font-weight: 800; }
+        .center span {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .classif { font-size: 1.28rem; font-weight: 800; margin-bottom: 16px; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .stat {
+            background: rgba(7, 19, 31, 0.5);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 14px 10px;
+        }
+
+        .stat small {
+            display: block;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            font-size: 0.7rem;
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .placa strong {
-            font-size: 0.95rem;
-            color: #4a4a4a;
-        }
+        .stat b { font-size: 1.2rem; }
+        .legend { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-        .dica {
-            text-align: center;
-            margin-bottom: 18px;
-            font-size: 1.05rem;
-            color: #4a5568;
-            min-height: 1.5em;
-        }
-
-        .resultado {
-            margin: 25px 0 10px;
-            padding: 20px;
-            border-radius: 15px;
-            background: #f8f9fa;
-            text-align: center;
-            border: 3px solid #667eea;
-        }
-
-        .resultado.vitoria {
-            background: #f0fff4;
-            border-color: #38a169;
-        }
-
-        .resultado.derrota {
-            background: #fff5f5;
-            border-color: #e53e3e;
-        }
-
-        .historico {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #eee;
-        }
-
-        .historico h3 {
-            margin-bottom: 15px;
-            color: #555;
-        }
-
-        .historico ul {
-            list-style: none;
-            max-height: 240px;
-            overflow-y: auto;
-        }
-
-        .historico li {
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(14, 36, 54, 0.7);
+            border: 1px solid var(--line);
+            border-radius: 14px;
             padding: 10px 12px;
-            background: #f9f9f9;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            border-left: 4px solid #667eea;
+            font-size: 0.82rem;
         }
 
-        .historico li.vitoria {
-            border-left-color: #38a169;
+        .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .chip .range { margin-left: auto; color: var(--muted); font-size: 0.74rem; }
+
+        .note {
+            margin-top: 18px;
+            text-align: center;
+            color: #7f9eae;
+            font-size: 0.8rem;
+            line-height: 1.55;
         }
 
-        .historico li.derrota {
-            border-left-color: #e53e3e;
+        @media (max-width: 420px) {
+            .row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <main class="wrap">
         <header>
-            <h1>🎯 Número Secreto</h1>
-            <p>Adivinhe o número escondido e bata o seu recorde</p>
+            <div class="badge">Ferramenta educativa</div>
+            <h1>Calculadora<br><em>de IMC</em></h1>
+            <p class="lead">Digite seu peso e sua altura para ver uma estimativa.</p>
         </header>
 
-        <div id="tela-inicio">
-            <div class="form-group">
-                <label for="dificuldade">Nível:</label>
-                <select id="dificuldade">
-                    <option value="facil">Fácil — de 1 a 20 (8 tentativas)</option>
-                    <option value="medio" selected>Médio — de 1 a 50 (7 tentativas)</option>
-                    <option value="dificil">Difícil — de 1 a 100 (6 tentativas)</option>
-                </select>
-            </div>
-            <button type="button" onclick="iniciarJogo()">Começar Jogo</button>
-        </div>
-
-        <div id="tela-jogo" class="escondido">
-            <div class="placar">
-                <div class="placa">
-                    <span class="placa-label">Intervalo</span>
-                    <strong id="info-intervalo">1 a 50</strong>
+        <section class="card">
+            <div class="row">
+                <div>
+                    <label for="peso">Peso</label>
+                    <div class="box">
+                        <input id="peso" type="text" inputmode="decimal" placeholder="0,0" autocomplete="off">
+                        <span class="unit">kg</span>
+                    </div>
                 </div>
-                <div class="placa">
-                    <span class="placa-label">Tentativas</span>
-                    <strong id="info-tentativas">7</strong>
-                </div>
-                <div class="placa">
-                    <span class="placa-label">Recorde</span>
-                    <strong id="info-recorde">—</strong>
+                <div>
+                    <label for="altura">Altura</label>
+                    <div class="box">
+                        <input id="altura" type="text" inputmode="decimal" placeholder="0" autocomplete="off">
+                        <span class="unit" id="unidadeAltura">cm</span>
+                    </div>
                 </div>
             </div>
 
-            <p id="dica" class="dica">Estou pensando em um número...</p>
-
-            <div class="form-group">
-                <label for="palpite">Seu palpite:</label>
-                <input type="number" id="palpite" min="1" step="1" placeholder="Ex: 25">
+            <div class="toggle">
+                <button type="button" id="btnCm" class="active">Altura em cm</button>
+                <button type="button" id="btnM">Altura em m</button>
             </div>
 
-            <button type="button" onclick="enviarPalpite()">Chutar</button>
-            <button type="button" class="botao-secundario" onclick="desistir()">Desistir</button>
+            <button class="btn" id="calcular" type="button">Calcular agora</button>
+            <p class="error" id="erro"></p>
 
-            <div id="resultado" class="resultado escondido"></div>
+            <div class="results" id="resultado">
+                <div class="ring">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="track" cx="80" cy="80" r="70"></circle>
+                        <circle class="bar" id="barra" cx="80" cy="80" r="70"></circle>
+                    </svg>
+                    <div class="center">
+                        <strong id="imcNum">—</strong>
+                        <span>IMC</span>
+                    </div>
+                </div>
+                <div class="classif" id="classe">—</div>
+                <div class="stats">
+                    <div class="stat">
+                        <small>Faixa de referência</small>
+                        <b id="faixa">—</b>
+                    </div>
+                    <div class="stat">
+                        <small>Peso no IMC 22</small>
+                        <b id="pesoRef">—</b>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="legend">
+            <div class="chip"><span class="dot" style="background:#38bdf8"></span>Abaixo<span class="range">&lt;18,5</span></div>
+            <div class="chip"><span class="dot" style="background:#34d399"></span>Normal<span class="range">18,5–24,9</span></div>
+            <div class="chip"><span class="dot" style="background:#fbbf24"></span>Sobrepeso<span class="range">25–29,9</span></div>
+            <div class="chip"><span class="dot" style="background:#fb923c"></span>Obes. I<span class="range">30–34,9</span></div>
+            <div class="chip"><span class="dot" style="background:#f87171"></span>Obes. II<span class="range">35–39,9</span></div>
+            <div class="chip"><span class="dot" style="background:#ef4444"></span>Obes. III<span class="range">≥40</span></div>
         </div>
 
-        <div class="historico">
-            <h3>📖 Histórico de Partidas</h3>
-            <ul id="lista-historico"></ul>
-        </div>
-    </div>
+        <p class="note">
+            O IMC é uma conta simples e não diz tudo sobre saúde.<br>
+            Em crianças e adolescentes o resultado precisa ser lido com curvas de crescimento.<br>
+            Consulte sempre um profissional de saúde.
+        </p>
+    </main>
 
     <script>
-        const NIVEIS = {
-            facil: { min: 1, max: 20, tentativas: 8, nome: "Fácil" },
-            medio: { min: 1, max: 50, tentativas: 7, nome: "Médio" },
-            dificil: { min: 1, max: 100, tentativas: 6, nome: "Difícil" }
-        };
+        const pesoEl = document.getElementById('peso');
+        const alturaEl = document.getElementById('altura');
+        const erroEl = document.getElementById('erro');
+        const resultadoEl = document.getElementById('resultado');
+        const unidadeEl = document.getElementById('unidadeAltura');
+        const btnCm = document.getElementById('btnCm');
+        const btnM = document.getElementById('btnM');
 
-        let numeroSecreto = 0;
-        let tentativasRestantes = 0;
-        let tentativasUsadas = 0;
-        let minAtual = 1;
-        let maxAtual = 50;
-        let nivelAtual = "medio";
-        let jogoAtivo = false;
+        let alturaEmCm = true;
 
-        function numeroAleatorio(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+        function numero(texto) {
+            if (!texto) return NaN;
+            return parseFloat(String(texto).trim().replace(',', '.'));
         }
 
-        function recordeDoNivel(nivel) {
-            const recordes = JSON.parse(localStorage.getItem("recordesNumeroSecreto") || "{}");
-            return recordes[nivel] || null;
+        function mostrarErro(msg) {
+            erroEl.textContent = msg;
+            erroEl.classList.add('show');
+            resultadoEl.classList.remove('show');
         }
 
-        function salvarRecorde(nivel, tentativas) {
-            const recordes = JSON.parse(localStorage.getItem("recordesNumeroSecreto") || "{}");
-            if (!recordes[nivel] || tentativas < recordes[nivel]) {
-                recordes[nivel] = tentativas;
-                localStorage.setItem("recordesNumeroSecreto", JSON.stringify(recordes));
-                return true;
+        function limparErro() {
+            erroEl.classList.remove('show');
+            erroEl.textContent = '';
+        }
+
+        function classificar(imc) {
+            if (imc < 18.5) return { nome: 'Abaixo do peso', cor: '#38bdf8', faixa: 'menor que 18,5' };
+            if (imc < 25) return { nome: 'Peso adequado', cor: '#34d399', faixa: '18,5 a 24,9' };
+            if (imc < 30) return { nome: 'Sobrepeso', cor: '#fbbf24', faixa: '25 a 29,9' };
+            if (imc < 35) return { nome: 'Obesidade grau I', cor: '#fb923c', faixa: '30 a 34,9' };
+            if (imc < 40) return { nome: 'Obesidade grau II', cor: '#f87171', faixa: '35 a 39,9' };
+            return { nome: 'Obesidade grau III', cor: '#ef4444', faixa: '40 ou mais' };
+        }
+
+        function calcular() {
+            const peso = numero(pesoEl.value);
+            let altura = numero(alturaEl.value);
+
+            if (!peso || peso <= 0 || peso > 400) {
+                mostrarErro('Digite um peso válido em quilogramas.');
+                return;
             }
-            return false;
-        }
-
-        function atualizarPlacar() {
-            document.getElementById("info-intervalo").textContent = minAtual + " a " + maxAtual;
-            document.getElementById("info-tentativas").textContent = tentativasRestantes;
-            const recorde = recordeDoNivel(nivelAtual);
-            document.getElementById("info-recorde").textContent = recorde ? recorde + " tent." : "—";
-        }
-
-        function iniciarJogo() {
-            nivelAtual = document.getElementById("dificuldade").value;
-            const config = NIVEIS[nivelAtual];
-
-            minAtual = config.min;
-            maxAtual = config.max;
-            tentativasRestantes = config.tentativas;
-            tentativasUsadas = 0;
-            numeroSecreto = numeroAleatorio(minAtual, maxAtual);
-            jogoAtivo = true;
-
-            document.getElementById("tela-inicio").classList.add("escondido");
-            document.getElementById("tela-jogo").classList.remove("escondido");
-            document.getElementById("resultado").classList.add("escondido");
-            document.getElementById("resultado").innerHTML = "";
-            document.getElementById("dica").textContent = "Estou pensando em um número de " + minAtual + " a " + maxAtual + ".";
-            document.getElementById("palpite").value = "";
-            document.getElementById("palpite").focus();
-            atualizarPlacar();
-        }
-
-        function enviarPalpite() {
-            if (!jogoAtivo) {
+            if (!altura || altura <= 0) {
+                mostrarErro('Digite uma altura válida.');
                 return;
             }
 
-            const campo = document.getElementById("palpite");
-            const palpite = parseInt(campo.value, 10);
-            const resultadoDiv = document.getElementById("resultado");
-
-            if ((!palpite && palpite !== 0) || palpite < minAtual || palpite > maxAtual) {
-                resultadoDiv.className = "resultado";
-                resultadoDiv.innerHTML = "<p>❌ Digite um número entre " + minAtual + " e " + maxAtual + ".</p>";
-                resultadoDiv.classList.remove("escondido");
-                return;
-            }
-
-            tentativasUsadas += 1;
-            tentativasRestantes -= 1;
-
-            if (palpite === numeroSecreto) {
-                finalizarJogo(true);
-                return;
-            }
-
-            if (tentativasRestantes <= 0) {
-                finalizarJogo(false);
-                return;
-            }
-
-            const dica = palpite < numeroSecreto ? "📈 Maior! Tente um número maior." : "📉 Menor! Tente um número menor.";
-            document.getElementById("dica").textContent = dica;
-            resultadoDiv.className = "resultado";
-            resultadoDiv.innerHTML = "<p>" + dica + "</p><p>Você ainda tem <strong>" + tentativasRestantes + "</strong> tentativa(s).</p>";
-            resultadoDiv.classList.remove("escondido");
-            atualizarPlacar();
-            campo.value = "";
-            campo.focus();
-        }
-
-        function finalizarJogo(venceu) {
-            jogoAtivo = false;
-            const resultadoDiv = document.getElementById("resultado");
-            const config = NIVEIS[nivelAtual];
-            let mensagemRecorde = "";
-
-            if (venceu) {
-                const novoRecorde = salvarRecorde(nivelAtual, tentativasUsadas);
-                mensagemRecorde = novoRecorde ? "<p>🏆 Novo recorde neste nível!</p>" : "";
-                resultadoDiv.className = "resultado vitoria";
-                resultadoDiv.innerHTML =
-                    "<h2>Você acertou!</h2>" +
-                    "<p>O número secreto era <strong>" + numeroSecreto + "</strong>.</p>" +
-                    "<p>Acertou em <strong>" + tentativasUsadas + "</strong> tentativa(s).</p>" +
-                    mensagemRecorde;
-                document.getElementById("dica").textContent = "✅ Muito bem!";
+            if (alturaEmCm) {
+                if (altura < 50 || altura > 250) {
+                    mostrarErro('Altura em cm deve ficar entre 50 e 250.');
+                    return;
+                }
+                altura = altura / 100;
             } else {
-                resultadoDiv.className = "resultado derrota";
-                resultadoDiv.innerHTML =
-                    "<h2>Fim de jogo</h2>" +
-                    "<p>O número secreto era <strong>" + numeroSecreto + "</strong>.</p>" +
-                    "<p>As tentativas acabaram. Tente de novo!</p>";
-                document.getElementById("dica").textContent = "❌ Não foi desta vez.";
+                if (altura > 3 && altura < 250) {
+                    mostrarErro('Essa altura parece estar em centímetros. Troque para “Altura em cm”.');
+                    return;
+                }
+                if (altura < 0.5 || altura > 2.5) {
+                    mostrarErro('Altura em metros deve ficar entre 0,50 e 2,50.');
+                    return;
+                }
             }
 
-            resultadoDiv.classList.remove("escondido");
-            atualizarPlacar();
-            salvarNoHistorico(venceu, config.nome, tentativasUsadas, numeroSecreto);
-            resultadoDiv.innerHTML += '<button type="button" onclick="voltarAoInicio()">Jogar de novo</button>';
+            const imc = peso / (altura * altura);
+            const info = classificar(imc);
+            const pesoRef = 22 * altura * altura;
+
+            limparErro();
+            document.getElementById('imcNum').textContent = imc.toFixed(1).replace('.', ',');
+            document.getElementById('classe').textContent = info.nome;
+            document.getElementById('classe').style.color = info.cor;
+            document.getElementById('faixa').textContent = info.faixa;
+            document.getElementById('pesoRef').textContent = pesoRef.toFixed(1).replace('.', ',') + ' kg';
+
+            const circ = 2 * Math.PI * 70;
+            let perc = (imc - 15) / 25;
+            perc = Math.max(0, Math.min(1, perc));
+            const barra = document.getElementById('barra');
+            barra.style.strokeDashoffset = String(circ - perc * circ);
+            barra.style.stroke = info.cor;
+
+            resultadoEl.classList.add('show');
         }
 
-        function desistir() {
-            if (!jogoAtivo) {
-                voltarAoInicio();
-                return;
-            }
-            finalizarJogo(false);
+        function setUnidade(cm) {
+            alturaEmCm = cm;
+            unidadeEl.textContent = cm ? 'cm' : 'm';
+            btnCm.classList.toggle('active', cm);
+            btnM.classList.toggle('active', !cm);
+            alturaEl.placeholder = cm ? '165' : '1,65';
         }
 
-        function voltarAoInicio() {
-            jogoAtivo = false;
-            document.getElementById("tela-jogo").classList.add("escondido");
-            document.getElementById("tela-inicio").classList.remove("escondido");
-            document.getElementById("resultado").classList.add("escondido");
-        }
-
-        function salvarNoHistorico(venceu, nivel, tentativas, numero) {
-            let historico = JSON.parse(localStorage.getItem("historicoNumeroSecreto") || "[]");
-            historico.unshift({
-                data: new Date().toLocaleString("pt-BR"),
-                venceu: venceu,
-                nivel: nivel,
-                tentativas: tentativas,
-                numero: numero
+        btnCm.addEventListener('click', () => setUnidade(true));
+        btnM.addEventListener('click', () => setUnidade(false));
+        document.getElementById('calcular').addEventListener('click', calcular);
+        [pesoEl, alturaEl].forEach((el) => {
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') calcular();
             });
-            if (historico.length > 10) {
-                historico.pop();
-            }
-            localStorage.setItem("historicoNumeroSecreto", JSON.stringify(historico));
-            carregarHistorico();
-        }
-
-        function carregarHistorico() {
-            const lista = document.getElementById("lista-historico");
-            const historico = JSON.parse(localStorage.getItem("historicoNumeroSecreto") || "[]");
-            lista.innerHTML = "";
-
-            if (historico.length === 0) {
-                const vazio = document.createElement("li");
-                vazio.textContent = "Nenhuma partida ainda. Comece um jogo!";
-                lista.appendChild(vazio);
-                return;
-            }
-
-            historico.forEach(function (item) {
-                const li = document.createElement("li");
-                li.className = item.venceu ? "vitoria" : "derrota";
-                const status = item.venceu ? "Vitória" : "Derrota";
-                li.textContent = item.data + " — " + status + " | " + item.nivel + " | número " + item.numero + " | " + item.tentativas + " tent.";
-                lista.appendChild(li);
-            });
-        }
-
-        document.getElementById("palpite").addEventListener("keydown", function (evento) {
-            if (evento.key === "Enter") {
-                enviarPalpite();
-            }
         });
-
-        window.onload = carregarHistorico;
     </script>
 </body>
 </html>
